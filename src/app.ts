@@ -8,11 +8,6 @@ const port = 2020;
 
 interface ICommandObject {}
 
-interface ICommandCommunicatorRequest {
-  indexOfNextCommand: number;
-  newCommand: ICommandObject;
-}
-
 interface ICommandCommunicatorResponse {
   indexOfNextCommand: number;
   newCommands: ICommandObject[];
@@ -32,12 +27,9 @@ app.delete("/game/:hostId", (req, res) => {
 app.post("/game/:hostId", jsonParser, (req, res) => {
   if (isICommandCommunicatorRequest(req.body)) {
     const { hostId } = req.params;
-    const {
-      newCommand,
-      indexOfNextCommand,
-    }: ICommandCommunicatorRequest = req.body;
+    const newCommand: ICommandObject = req.body;
     addCommandToGame(hostId, newCommand);
-    res.json(getGameCommandsAfterIndex(hostId, indexOfNextCommand));
+    res.sendStatus(200);
   } else {
     res.sendStatus(400);
   }
@@ -45,8 +37,8 @@ app.post("/game/:hostId", jsonParser, (req, res) => {
 
 function isICommandCommunicatorRequest(
   request: any
-): request is ICommandCommunicatorRequest {
-  return request && request.indexOfNextCommand >= 0 && request.newCommand;
+): request is ICommandObject {
+  return request && request.name;
 }
 
 function addCommandToGame(hostId: string, command: ICommandObject): void {
@@ -89,9 +81,9 @@ function getCommandsAfterIndex(
 
 app.post("/lobby", jsonParser, (req, res) => {
   if (isICommandCommunicatorRequest(req.body)) {
-    const { indexOfNextCommand } = req.body;
-    addCommandToLobby(req.body.newCommand);
-    res.json(getCommandsAfterIndex(lobbyCommands, indexOfNextCommand));
+    const newCommand = req.body;
+    addCommandToLobby(newCommand);
+    res.sendStatus(200);
   } else {
     res.sendStatus(400);
   }
