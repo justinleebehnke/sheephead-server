@@ -4,7 +4,7 @@ import express from "express";
 
 const app = express();
 app.use(cors());
-const port = 2020;
+const port = process.env.PORT || 2020;
 
 interface ICommandObject {}
 
