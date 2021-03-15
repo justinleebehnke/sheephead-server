@@ -18,6 +18,14 @@ const jsonParser = bodyParser.json();
 const hostIdToGameCommands: Map<string, ICommandObject[]> = new Map();
 const lobbyCommands: ICommandObject[] = [];
 
+app.delete("/", (req, res) => {
+  hostIdToGameCommands.clear();
+  while (lobbyCommands.length > 0) {
+    lobbyCommands.pop();
+  }
+  res.send(200);
+});
+
 app.delete("/game/:hostId", (req, res) => {
   const { hostId } = req.params;
   hostIdToGameCommands.delete(hostId);
